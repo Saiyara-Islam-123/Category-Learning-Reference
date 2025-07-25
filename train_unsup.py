@@ -5,6 +5,7 @@ from dist import *
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
+torch.random.manual_seed(59)
 
 
 def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
@@ -23,10 +24,11 @@ def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
             optimizer.zero_grad()
             inputs = X_train[i:i + batch_size]
             labels = y_train[i:i + batch_size]
-            outputs = unsup_model(inputs.reshape(inputs.shape[0],1, 18))
-            loss = criterion(outputs, inputs.reshape(inputs.shape[0],1, 18))
+            outputs = unsup_model(inputs.reshape(inputs.shape[0],1, 50))
+            loss = criterion(outputs, inputs.reshape(inputs.shape[0],1, 50))
             loss.backward()
             optimizer.step()
+
 
             zero, zero_one, one = sampled_all_distance(unsup_model.encoded, labels)
 
@@ -38,7 +40,7 @@ def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
                            epoch) + "_" + str(int(i / batch_size)) + ".pth")
 
             print(i, loss.item())
-            print(labels)
+
 
             print(zero, zero_one, one)
 

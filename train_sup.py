@@ -6,7 +6,7 @@ import torch
 from dist import *
 import torch.nn as nn
 import torch.optim as optim
-
+torch.random.manual_seed(59)
 
 def train_supervised(sup_model, lr, epochs, X_train, y_train, batch_size):
     criterion = nn.CrossEntropyLoss()  # CrossEntropyLoss for classification
@@ -27,12 +27,12 @@ def train_supervised(sup_model, lr, epochs, X_train, y_train, batch_size):
             optimizer.zero_grad()
             inputs = X_train[i:i + batch_size]
             labels = y_train[i:i + batch_size]
-            outputs = sup_model(inputs.reshape(inputs.shape[0],1, 18))
+            outputs = sup_model(inputs.reshape(inputs.shape[0],1, 50))
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
-            zero, zero_one, one = sampled_all_distance(sup_model.encoded, labels)
+            zero, zero_one, one = sampled_all_distance(sup_model.autoencoder_output, labels)
 
             avg_distances[(0, 0)].append(zero)
             avg_distances[(0, 1)].append(zero_one)

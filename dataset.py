@@ -4,6 +4,7 @@ import random
 np.random.seed(0)
 random.seed(0)
 import torch
+torch.manual_seed(0)
 
 def create_prototype(num_charac_features, vec_size):
     cat_a_proto = np.zeros(vec_size)
