@@ -12,10 +12,10 @@ class AutoEncoder(nn.Module):
 
             nn.Conv1d(1, 1, kernel_size=2, stride=2, padding=1),
             nn.ReLU(True),
-            nn.Conv1d(1, 1, kernel_size=3, stride=2, padding=1),
+            nn.Conv1d(1, 1, kernel_size=2, stride=2, padding=1),
             nn.ReLU(True),
             nn.Flatten(),
-            nn.Linear(5 * 1 * 1, 3),
+            nn.Linear(6 * 1 * 1, 3),
             nn.ReLU(True)
 
         )
@@ -24,12 +24,12 @@ class AutoEncoder(nn.Module):
 
         self.decoder = torch.nn.Sequential(
 
-            nn.Linear(3, 5 * 1 * 1),
+            nn.Linear(3, 6 * 1 * 1),
             nn.ReLU(True),
-            nn.Unflatten(1, (5, 1, 1)),
-            nn.ConvTranspose2d(1, 1, kernel_size=3, stride=2, padding=1, output_padding=0),
+            nn.Unflatten(1, (1, 6)),
+            nn.ConvTranspose1d(1, 1, kernel_size=2, stride=2, padding=1, output_padding=0),
             nn.ReLU(True),
-            nn.ConvTranspose2d(1, 1, kernel_size=2, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose1d(1, 1, kernel_size=2, stride=2, padding=1, output_padding=0),
             # Correcting stride/padding
             nn.ReLU(True),
 

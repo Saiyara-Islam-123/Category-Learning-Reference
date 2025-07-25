@@ -4,9 +4,10 @@ import torch
 from dist import *
 import torch.nn as nn
 import torch.optim as optim
+import pandas as pd
 
 
-def train_unsupervised(unsup_model, lr, epochs, train_set, test_set, batch_size):
+def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
     criterion = nn.MSELoss()
     optimizer = optim.Adam(unsup_model.parameters(), lr=lr)
     unsup_model.train()
@@ -15,15 +16,15 @@ def train_unsupervised(unsup_model, lr, epochs, train_set, test_set, batch_size)
     avg_distances[(0, 0)] = []
     avg_distances[(0, 1)] = []
     avg_distances[(1, 1)] = []
-    accuracies = []
+
 
     for epoch in range(epochs):
-        for i in range(0, len(train_set), batch_size):
+        for i in range(0, X_train.shape[0], batch_size):
             optimizer.zero_grad()
-            inputs = train_set[i:i + batch_size]
-            labels = inputs[:, -1]
-            outputs = unsup_model(inputs)
-            loss = criterion(outputs, inputs)
+            inputs = X_train[i:i + batch_size]
+            labels = y_train[i:i + batch_size]
+            outputs = unsup_model(inputs.reshape(inputs.shape[0],1, 18))
+            loss = criterion(outputs, inputs.reshape(inputs.shape[0],1, 18))
             loss.backward()
             optimizer.step()
 
@@ -33,9 +34,13 @@ def train_unsupervised(unsup_model, lr, epochs, train_set, test_set, batch_size)
             avg_distances[(0, 1)].append(zero_one)
             avg_distances[(1, 1)].append(one)
             torch.save(unsup_model.state_dict(),
-                       "../net_weights/unsup/unsup_net_weights_" + " lr=" + str(lr) + "_" + str(
-                           epoch) + "_" + str(i) + ".pth")
+                       "weights/unsup/unsup_net_weights_" + " lr=" + str(lr) + "_" + str(
+                           epoch) + "_" + str(int(i / batch_size)) + ".pth")
 
             print(i, loss.item())
+            print(labels)
 
-            
+            print(zero, zero_one, one)
+
+    df = pd.DataFrame(avg_distances)
+    df.to_csv(f"unsup lr={lr}")

@@ -14,8 +14,8 @@ def sampled_all_distance(X,y):
     for i in range(y.shape[0]):
         for j in range(y.shape[0]):
             if i != j:
-                y1 = y[i].item()
-                y2 = y[j].item()
+                y1 = int(y[i].item())
+                y2 = int(y[j].item())
 
                 mat_1 = X[i]
                 mat_2 = X[j]
@@ -27,9 +27,9 @@ def sampled_all_distance(X,y):
                 mat_2_flattened_normalized = torch.nn.functional.normalize(mat_2_flattened, p=2, dim=1)
 
                 if y1 == 1 and y2 == 0:
-
                     d[(y2, y1)].append(torch.norm(mat_1_flattened_normalized - mat_2_flattened_normalized).item())
                 else:
+
                     d[(y1, y2)].append(torch.norm(mat_1_flattened_normalized - mat_2_flattened_normalized).item())
 
 

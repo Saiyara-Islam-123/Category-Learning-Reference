@@ -1,5 +1,5 @@
 import numpy as np
-
+from sklearn.model_selection import train_test_split
 import random
 np.random.seed(0)
 random.seed(0)
@@ -48,16 +48,24 @@ def generate_data(cat, vec_size, num_charac_features, dataset_size):
 
         else:
             l.append(cat_2)
-    return torch.tensor(np.array(l))
+    return torch.tensor(np.array(l), dtype=torch.float32)
 
-def get_dataset(vec_size, dataset_size):
-    ones = generate_data(cat=1, vec_size=vec_size, dataset_size=dataset_size)
-    zeros = generate_data(cat=0, vec_size=vec_size, dataset_size=dataset_size)
+def get_dataset(vec_size, dataset_size, num_charac_features):
+    ones = generate_data(cat=1, vec_size=vec_size, dataset_size=dataset_size, num_charac_features=num_charac_features)
+    zeros = generate_data(cat=0, vec_size=vec_size, dataset_size=dataset_size, num_charac_features=num_charac_features)
+    labels = []
+    for i in range(ones.shape[0]):
+        labels.append(1)
+    for i in range(zeros.shape[0]):
+        labels.append(0)
+
+    labels = torch.tensor(labels, dtype=torch.int64)
     dataset = torch.cat((ones, zeros))
-    train_set, test_set = torch.utils.data.random_split(dataset, [0.9, 0.1])
 
-    return train_set, test_set
-    #last index for each vector is also the label
+    X_train, X_test, y_train, y_test = train_test_split(
+        dataset, labels, test_size=0.2)
+
+    return X_train, X_test, y_train, y_test
 
 if __name__ == '__main__':
-    print(create_prototype(num_charac_features=2, vec_size=5))
+    print(get_dataset(vec_size=5, dataset_size=50, num_charac_features=2))
