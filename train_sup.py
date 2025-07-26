@@ -6,7 +6,6 @@ import torch
 from dist import *
 import torch.nn as nn
 import torch.optim as optim
-torch.random.manual_seed(59)
 
 def train_supervised(sup_model, lr, epochs, X_train, y_train, batch_size):
     criterion = nn.CrossEntropyLoss()  # CrossEntropyLoss for classification
@@ -37,19 +36,20 @@ def train_supervised(sup_model, lr, epochs, X_train, y_train, batch_size):
             avg_distances[(0, 0)].append(zero)
             avg_distances[(0, 1)].append(zero_one)
             avg_distances[(1, 1)].append(one)
+            '''
             torch.save(sup_model.state_dict(),
                        "weights/sup/sup_net_weights_" + " lr=" + str(lr) + "_" + str(
                            epoch) + "_" + str(int(i / batch_size)) + ".pth")
-
+            '''
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
             accuracy = 100 * correct / total
             accuracy_values.append(accuracy)
+            print(i / batch_size, loss.item())
             print("acc:", accuracy)
             print(zero, zero_one, one)
-            print(i, loss.item())
 
     df = pd.DataFrame(avg_distances)
     df["accuracy"] = accuracy_values

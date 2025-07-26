@@ -5,7 +5,7 @@ from dist import *
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
-torch.random.manual_seed(59)
+
 
 
 def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
@@ -31,15 +31,17 @@ def train_unsupervised(unsup_model, lr, epochs, X_train, y_train, batch_size):
 
 
             zero, zero_one, one = sampled_all_distance(unsup_model.encoded, labels)
+            print(unsup_model.encoded)
 
             avg_distances[(0, 0)].append(zero)
             avg_distances[(0, 1)].append(zero_one)
             avg_distances[(1, 1)].append(one)
+            '''
             torch.save(unsup_model.state_dict(),
                        "weights/unsup/unsup_net_weights_" + " lr=" + str(lr) + "_" + str(
                            epoch) + "_" + str(int(i / batch_size)) + ".pth")
-
-            print(i, loss.item())
+            '''
+            print(i/batch_size, loss.item())
 
 
             print(zero, zero_one, one)
